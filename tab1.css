@@ -1,0 +1,35 @@
+.tit,.con{
+			list-style: none;
+		}
+		.tit{
+			overflow: hidden;
+		}
+		.tit li{
+			width:200px;
+			height:40px;
+			background-color: pink;
+			float:left;
+			text-align: center;
+			line-height: 40px;
+			cursor: pointer;
+			margin-bottom: 10px;
+		}
+		.tit li:hover,.tit .active{
+			background-color: lightblue;
+		}
+		.con li{
+			display:none;
+			width: 450px;
+			height: 300px;
+			position: relative;
+			background-color: orange;
+		}
+		.con li:first-child{
+			display: block;
+		}
+		.cancel,.add{
+			width:50px;
+			height:40px;
+			background-color: lightgreen;
+			margin-left: 10px;
+		}

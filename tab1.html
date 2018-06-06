@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<link rel="stylesheet" href="tab1.css">
+</head>
+<body>
+	<ul class="tit">
+		<li class="aactive">标题1&nbsp;&nbsp;&nbsp;<button class='clo'>close</button></li>
+		<li>标题2&nbsp;&nbsp;&nbsp;<button class='clo'>close</button></li>
+		<li>标题3&nbsp;&nbsp;&nbsp;<button class='clo'>close</button></li>
+		<!-- <li>新增标签页&nbsp;&nbsp;&nbsp;<button class='clo'>close</button></li> -->
+		<button class="cancel">撤销</button>
+		<button class="add">新增</button>
+	</ul>
+	<ul class="con">
+		<li>内容1</li>
+		<li>内容2</li>
+		<li>内容3</li>
+		<!-- <li>新增内容</li> -->
+	</ul>
+	<script>
+	// 用CSS选择器获取DOM元素
+		function $(o){
+			return document.querySelectorAll(o);
+		}
+		//定义一个更新页面中所需元素长度的函数
+		function refreshLen(){
+			 tits_dom = $(".tit li");
+			 cons_dom = $(".con li");
+			 tits_len = tits_dom.length;
+		}
+		refreshLen();
+		// 定义两个数组存储所删除的节点
+		var temp_tit = [];
+		var temp_con = [];
+		//获取标题的父级
+		var tit = $('.tit')[0];
+		// 获取内容元素的父级
+		var con = $('.con')[0];
+		// 获取添加按钮
+		var add = $('.add')[0];
+		// 获取撤销按钮
+		var cancel = $('.cancel')[0];
+		//设置两个变量来存储新增内容
+		var newtit = tits_dom[tits_len-1].cloneNode(true);
+		var newcon = cons_dom[tits_len-1].cloneNode(true);
+		// 为每个标题绑定点击事件，实现点击对应标题出现对应内容   采用事件委托的方式
+		tit.onclick = function(e){
+			//事件对象的兼容处理
+			var event = window.event || event;
+			//获取事件源
+			var target = event.srcElement || event.target;
+			refreshLen();
+			if(target.nodeName == 'LI'){ //点击显示对应内容
+				let cur = index(target);
+				for(var j=0;j<tits_len;j++){
+					hide(cons_dom[j]);
+					// 取消所有标题的高亮
+					tits_dom[j].className = tits_dom[j].className.replace('active','').trim();
+				}
+				//显示对应内容区				
+				show(cons_dom[cur]);
+				//给点击的元素添加高亮
+				target.className += ' active';
+			}else if(hasClass(target,'clo')){//关闭
+				var par = target.parentNode;
+				//获取该点击元素的下标值
+					let cur = index(par);
+					temptit = par.parentNode.removeChild(par);
+	 				temp_tit.push(temptit);
+	 			    tempcon = cons_dom[cur].parentNode.removeChild(cons_dom[cur]);
+				    temp_con.push(tempcon);
+				    // 设置一个默认显示内容
+				 	if(hasClass(par,'active')){
+				 		show(cons_dom[0]);
+						tits_dom[0].className += ' active';
+				 	}
+			}
+		}
+
+		//新增元素  追加标题并高亮  追加内容并显示
+		add.onclick = function(){
+			 var newti = document.createElement('li');
+			 newti.innerHTML = '新增标签页&nbsp;&nbsp;&nbsp;<button class="clo">close</button>'
+			 var newco = document.createElement('li');
+			 newco.innerHTML = '新增内容';
+			//让新增的页面在点击的时候显示，其余时刻隐藏
+			if(hasClass(newti,'active')){
+				newti.className = newti.className.replace('active','').trim();
+				hide(newco);
+			}
+			tit.insertBefore(newti,cancel);
+			con.appendChild(newco);
+		}
+		//撤销
+		cancel.onclick = function(){
+			var len = temp_tit.length;
+			if(len>0){
+				for(var i=0;i<len;i++){
+					if(hasClass(temp_tit[i],'active')){//高亮元素的内容区显示
+						temp_tit[i].className = temp_tit[i].className.replace('active','').trim();
+						hide(temp_con[i]);
+					}
+				}
+				tit.insertBefore(temp_tit.pop(),cancel);
+				con.appendChild(temp_con.pop());
+			}
+		}
+		//求当前点击元素在其兄弟元素中的下标值
+
+		function index(dom){
+			var num = 0;
+			var bro = dom.previousElementSibling;
+			while(bro){
+				num ++;
+				bro = bro.previousElementSibling;
+			}
+			return num;
+		}
+		//加载完毕时为元素绑定点击事件
+		// window.onload = function(){
+		// 	addBtnClick();
+		// 	addTitClick();
+		// }
+		//检测一个元素有没有某个类
+		function hasClass(dom,cla){
+		var arr = dom.className.split(' ');
+		//设置一个标志来表示有没有找到对应类名
+		var flag = false;
+		arr.forEach(function(item){
+			if(item == cla){
+				flag = true;
+			}
+		});
+			return flag;
+		}
+		//定义一个显示函数
+		function show(dom){
+			dom.style.display = 'block';
+		}
+		//定义一个隐藏函数
+		function hide(dom){
+			dom.style.display = 'none';
+		}
+	</script>
+	
+</body>
+</html>
